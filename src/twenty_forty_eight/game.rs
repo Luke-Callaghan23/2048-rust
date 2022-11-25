@@ -14,8 +14,6 @@ use std::io::Read;
 use std::io::Write;
 use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
 
-const STDIN: i32 = 0;
-
 pub fn next_keypress () -> u8 {
 
     let stdin = 0; 

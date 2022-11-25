@@ -1,18 +1,6 @@
 use std::fmt;
-use std::fmt::write;
-use super::structs::Directions;
 use super::structs::Board;
 use super::structs::SIDE_SIZE;
-
-pub fn print() {
-    let dir = Directions::Up;
-    println!("Directions: {:?}", dir);
-    println!("Hello");
-}
-
-impl Board {
-    
-}
 
 fn find_max_tilesize (board: &Board) -> (u8, Vec<(u8, u32)>) {
     let Board(tiles) = board;
