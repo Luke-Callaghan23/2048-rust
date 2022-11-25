@@ -191,17 +191,10 @@ use rand::Rng;
 
 impl Board {
     pub fn new () -> Self {
-        let mut tiles = [ 0; SIDE_SIZE * SIDE_SIZE ];
-        let mut rng = rand::thread_rng();
+        let tiles = [ 0; SIDE_SIZE * SIDE_SIZE ];
 
-        // Get the index to place the starter number
-        let index = rng.gen_range(0..SIDE_SIZE*SIDE_SIZE);
-
-        // Determine if the number should be a two or a four
-        let is_four = rng.gen_bool(0.5);
-
-        // Set the tile index to a 2 or a four
-        tiles[index] = if is_four { 4 } else { 2 };
+        let tiles = Board::new_tile(tiles);
+        let tiles = Board::new_tile(tiles);
 
         // Return a new board
         Board(tiles)
@@ -366,6 +359,14 @@ impl Board {
         }
 
         // If there was a shift, then add a new tile
+        // And return the next board state
+        let tiles = Board::new_tile(tiles);
+        Board(tiles)
+    }
+
+
+
+    fn new_tile (mut tiles: [u32; SIDE_SIZE * SIDE_SIZE]) -> [u32; SIDE_SIZE * SIDE_SIZE] {
 
         // Collect a list of the indeces of all empty tiles on the board
         let empty_tiles = tiles.iter()                                             // create an iterator
@@ -386,7 +387,6 @@ impl Board {
         let new_tile_index = empty_tiles[new_spot];
         tiles[new_tile_index] = if is_four { 4 } else { 2 };
 
-        // Return the next board state
-        Board(tiles)
+        tiles
     }
 }

@@ -8,12 +8,6 @@ mod twenty_forty_eight;
 fn main() {
     print!("{}[2J", 27 as char);
     let mut board = twenty_forty_eight::structs::Board::new();
-    let mut board = twenty_forty_eight::structs::Board([
-        4,4,8,0,
-        4,0,0,0,
-        8,0,0,0,
-        0,0,0,0,
-    ]);
     
     println!("{}", board);
     println!("Press 'e' for help");
