@@ -16,7 +16,7 @@ use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
 
 const STDIN: i32 = 0;
 
-fn next_keypress () -> u8 {
+pub fn next_keypress () -> u8 {
 
     let stdin = 0; 
     let termios = Termios::from_fd(stdin).unwrap();
@@ -217,6 +217,8 @@ impl Board {
             do_iterate_backwards: bool,
         ) -> bool {
 
+            let mut filled: [bool; SIDE_SIZE * SIDE_SIZE] = [false; SIDE_SIZE * SIDE_SIZE];
+
             let mut any_moved = false;
 
             // Closure that captures the "do_iterate_backwards" parameter, and moves a root
@@ -248,43 +250,32 @@ impl Board {
                 // Don't fill anything in when the current number in the stack is 0
                 if stack_val == 0 { continue }
                 
+                let filled_index = filled_row * SIDE_SIZE + filled_col;
+
                 // If the current value is equal to the currently "filled" tile, then
                 //      "merge" the tiles
-                let do_erase = if stack_val == tiles[filled_row * SIDE_SIZE + filled_col] {
+                let do_erase = if stack_val == tiles[filled_index] && !filled[filled_index] {
                     // Merge by multiplying the tile value by 2
-                    tiles[filled_row * SIDE_SIZE + filled_col] = stack_val * 2;
+                    tiles[filled_index] = stack_val * 2;
 
-                    // Then advance the filled index
-                    // (filled_row, filled_col) = if do_iterate_rows {
-                    //     (advance_by(filled_row, 1), filled_col)
-                    // }
-                    // else {
-                    //     (filled_row, advance_by(filled_col, 1))
-                    // };
-
+                    // Then, denote that this slot has been filled once already
+                    // This prevents someting like: [ 4, 4, 8, 0 ]
+                    // From becoming: [ 16, 0, 0, 0 ]
+                    // When the real desired state is: [ 8, 8, 0, 0 ]
+                    filled[filled_index] = true;
 
                     true
                 }
                 
                 // Otherwise, need to shift the tile down
-                else if tiles[filled_row * SIDE_SIZE + filled_col] == 0 {
+                else if tiles[filled_index] == 0 {
                     // If the tile is shifting into an empty slot, then move the value over before advancing
                     //      filled index (row or column)
                     let do_erase = filled_row != row || filled_col != col;
 
                     // Simulate the "slide" by copying the value of the evauated tile into the 
                     //      same slot as the filled index
-                    tiles[filled_row * SIDE_SIZE + filled_col] = stack_val;
-
-
-                    // // Then advance the filled index
-                    // (filled_row, filled_col) = if do_iterate_rows {
-                    //     (advance_by(filled_row, 1), filled_col)
-                    // }
-                    // else {
-                    //     (filled_row, advance_by(filled_col, 1))
-                    // };
-
+                    tiles[filled_index] = stack_val;
                     do_erase
                 }
                 else {

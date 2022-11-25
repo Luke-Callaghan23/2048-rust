@@ -8,6 +8,12 @@ mod twenty_forty_eight;
 fn main() {
     print!("{}[2J", 27 as char);
     let mut board = twenty_forty_eight::structs::Board::new();
+    let mut board = twenty_forty_eight::structs::Board([
+        4,4,8,0,
+        4,0,0,0,
+        8,0,0,0,
+        0,0,0,0,
+    ]);
     
     println!("{}", board);
     println!("Press 'e' for help");
@@ -38,17 +44,9 @@ fn main() {
                                 println!(": ");
     
                                 // Get response from user
-                                let mut input = String::new();
-                                std::io::stdin().read_line(&mut input);
+                                let response = twenty_forty_eight::game::next_keypress() as char;
     
-                                // Get the first character from the user input
-                                let char_resp = if let Some(cr) = input.chars().nth(0) { cr }
-                                // If the user gave an empty string, simply continue looping
-                                else {
-                                    continue
-                                };
-    
-                                match char_resp {
+                                match response {
                                     // 'y' -- new game
                                     'y' | 'Y' => {
                                         won = false;
@@ -93,17 +91,9 @@ fn main() {
                                 println!(": ");
     
                                 // Get response from user
-                                let mut input = String::new();
-                                std::io::stdin().read_line(&mut input);
+                                let response = twenty_forty_eight::game::next_keypress() as char;
     
-                                // Get the first character from the user input
-                                let char_resp = if let Some(cr) = input.chars().nth(0) { cr }
-                                // If the user gave an empty string, simply continue looping
-                                else {
-                                    continue
-                                };
-    
-                                match char_resp {
+                                match response {
                                     // 'y' -- new game
                                     'y' | 'Y' => {
                                         return Some(twenty_forty_eight::structs::Board::new());
